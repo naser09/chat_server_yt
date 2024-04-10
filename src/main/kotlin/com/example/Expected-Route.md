@@ -10,7 +10,7 @@ friends:
     get all user
     get friends Blog
     like friends Blog
-    add user as friends
+    add user as friends-
 
 group :
     
@@ -23,3 +23,8 @@ Text Message :
     send message to group
     CRUD
     
+Blog:
+    
+    post a blog.
+    get all blog from friends 
+    liked blog.

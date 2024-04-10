@@ -6,10 +6,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.json.Json
 import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException
-import org.jetbrains.exposed.sql.Database
-import java.sql.SQLIntegrityConstraintViolationException
 
 fun Application.userRoute(userRepository: UserRepository){
     val tokenRepository = TokenRepository()
