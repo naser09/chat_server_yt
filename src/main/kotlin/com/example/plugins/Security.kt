@@ -73,7 +73,7 @@ fun Application.configureSecurity(userRepository: UserRepository) {
                 call.respondText("Hello ${principal.name}")
             }
         }
-        authenticate {
+        authenticate{
             get("/auth"){
                 call.respond(HttpStatusCode.OK,"authenticated")
             }

@@ -1,15 +1,18 @@
 package com.example.group
 
 import com.example.user.CustomListSerializer
+import com.example.user.User
 import com.example.user.UserRepository
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.UUID
+import java.net.ServerSocket
+import java.net.Socket
+import java.nio.charset.Charset
+import kotlin.concurrent.thread
 
 class GroupRepository(private val database: Database){
 
@@ -89,4 +92,29 @@ suspend fun readByUserId(userId:Long):List<Group> = dbQuery {
             GroupTable.deleteWhere { GroupTable.id.eq(id) }
         }
     }
+}
+//Test class
+fun main() = runBlocking{
+    val list = listOf<Long>(10,1,2,3,5,45,89,65,123,789,56)
+    val string = Json.encodeToString(CustomListSerializer,list)
+    println(string)
+    val database = Database.connect(
+        url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
+        user = "root",
+        driver = "org.h2.Driver",
+        password = ""
+    )
+    val userRepository = UserRepository(database)
+    val repo = GroupRepository(database)
+    val groups = (1..10).map { Group(it.toLong(),"group no :$it",it.toLong(), listOf(it.toLong())) }
+    val owners = groups.map { User(0,"owner ${it.id}","pass") }
+    val scope = GlobalScope.launch {
+        owners.forEach { userRepository.create(it) }
+        groups.forEach { repo.create(it) }
+        val data = repo.readByGroupId(groups.map { it.id })
+        data.forEach {
+            println(it)
+        }
+    }
+    scope.join()
 }
